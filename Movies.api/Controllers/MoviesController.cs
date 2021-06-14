@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Movies.api.Data;
@@ -10,6 +11,8 @@ namespace Movies.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize] - non claim-based authorization
+    [Authorize("ClientIdPolicy")] //claim-based authorization
     public class MoviesController : ControllerBase
     {
         /*

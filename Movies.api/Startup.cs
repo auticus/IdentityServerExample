@@ -1,17 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Movies.api.Data;
 
 namespace Movies.api
@@ -37,6 +31,23 @@ namespace Movies.api
 
             services.AddDbContext<MoviesapiContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("MoviesapiContext")));
+
+            //now set up the JWT bearer token authentication (uses nuget package AspNetCore.Authentication.JwtBearer)
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:5005"; //not wild about hard-coding this, this is for demo purposes but it is the identity server address
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateAudience = false
+                    };
+                });
+
+            //claim based authorization (if using this, then the Authorize attributes will need to pass the policy in, controllers will have examples of both)
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "moviesClient"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +64,7 @@ namespace Movies.api
 
             app.UseRouting();
 
+            app.UseAuthentication(); //will use the jwt bearer authentication we configured
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
