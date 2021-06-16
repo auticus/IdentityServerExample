@@ -28,6 +28,7 @@ namespace IdentityServer
 
             //you can access this in postman or thunder client or whatever by visiting https://localhost:5005/.well-known/openid-configuration
             //5005 is how we have this service listed as 
+            services.AddControllersWithViews();
             services.AddIdentityServer()
                 .AddInMemoryClients(Config.Clients)
                 .AddInMemoryIdentityResources(Config.IdentityResources)
@@ -46,15 +47,14 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles(); //uses static files from the wwwroot
             app.UseRouting();
             app.UseIdentityServer();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapDefaultControllerRoute(); //adds default route Home/Index/id? which exists in the Quickstart folder
             });
         }
     }
