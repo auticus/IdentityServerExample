@@ -1,10 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Movies.client.Clients;
 using Movies.client.Models;
 
 namespace Movies.client.Controllers
 {
+    [Authorize]
     public class MoviesController : Controller
     {
         private readonly IMovieAPIService _movieClient;
@@ -17,6 +24,7 @@ namespace Movies.client.Controllers
         // GET: Movies
         public async Task<IActionResult> Index()
         {
+            LogTokenAndClaims();
             return View(await _movieClient.GetMovies());
         }
 
@@ -160,6 +168,23 @@ namespace Movies.client.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
             */
+        }
+
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        private async Task LogTokenAndClaims()
+        {
+            var token = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+            Debug.WriteLine($"Identity Token = {token}");
+
+            foreach (var claim in User.Claims)
+            {
+                Debug.WriteLine($"Claim type:  {claim.Type} - Claim Value: {claim.Value}");
+            }
         }
 
         private bool MovieExists(int id)
