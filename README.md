@@ -8,3 +8,4 @@ IdentityServer - the identity server itself.  This has a UI Diagnostics project 
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/IdentityServer/IdentityServer4.Quickstart.UI/main/getmain.ps1'))
 
 Movies.Client - a sample web app that needs authentication to access the api.
+---> Nuget package Microsoft.AspNetCore.Authentication.OpenIdConnect -> middleware that enables an application to support the OpenID Connect authentication workflow
