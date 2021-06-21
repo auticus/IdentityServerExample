@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Movies.client.Clients;
+using Movies.client.HttpHandler;
 
 namespace Movies.client
 {
@@ -41,6 +45,32 @@ namespace Movies.client
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
                 });
+
+            //create httpClient used for accessing the Movies.API
+            services.AddTransient<AuthenticationDelegatingHandler>(); //intercepts calls, this is a new message handler class
+
+            services.AddHttpClient("MoviesAPIClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+            }).AddHttpMessageHandler<AuthenticationDelegatingHandler>(); //lets this client know that the handler class given will be intercepting its messages
+
+            //create the httpClient to access the Identity server
+            services.AddHttpClient("IdentityServerClient", client =>
+            {
+                client.BaseAddress = new Uri("https://loclhost:5005");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+            });
+
+            services.AddSingleton(new ClientCredentialsTokenRequest
+            {
+                Address="https://localhost:5005/connect/token",
+                ClientId = "moviesClient",
+                ClientSecret = "smeagolCries",
+                Scope = "moviesAPI"
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
