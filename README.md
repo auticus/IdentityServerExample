@@ -9,3 +9,4 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 
 Movies.Client - a sample web app that needs authentication to access the api.
 ---> Nuget package Microsoft.AspNetCore.Authentication.OpenIdConnect -> middleware that enables an application to support the OpenID Connect authentication workflow
+---> Nuget package IdentityModel -> OpenID Connect and OAuth2.0 client library
