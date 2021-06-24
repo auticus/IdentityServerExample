@@ -14,3 +14,4 @@ Movies.Client - a sample web app that needs authentication to access the api.
 Hybrid Flow 
 https://code-maze.com/hybrid-flow-securing-aspnetcore-web-application/
 We are using the Hybrid Flow when we want to acquire our tokens over the front and back channels. When we receive a token via /authorization endpoint over URI or Form POST, we are talking about the front-channel. When we receive a token via /token endpoint, we are talking about the back-channel. The Hybrid flow uses both channels in the process
+This is the recommended flow for native applications that want to retrieve access tokens (and possibly refresh tokens as well) and is used for server-side web applications and native desktop/mobile applications.
