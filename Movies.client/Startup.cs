@@ -38,9 +38,10 @@ namespace Movies.client
                     options.Authority = "https://localhost:5005"; //hard coded badness to the identity server
                     options.ClientId = "movies_mvc_client";
                     options.ClientSecret = "smeagolCries";
-                    options.ResponseType = "code";
+                    options.ResponseType = "code id_token"; //changed from code to code id_token in hybrid 
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
+                    options.Scope.Add("moviesAPI");
 
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
@@ -64,6 +65,8 @@ namespace Movies.client
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
             });
 
+            services.AddHttpContextAccessor(); //added when adding hybrid grant type - access the token returned with this accessor
+            /* because this is now using hybrid - do not need to access identity server directly any longer
             services.AddSingleton(new ClientCredentialsTokenRequest
             {
                 Address="https://localhost:5005/connect/token",
@@ -71,6 +74,7 @@ namespace Movies.client
                 ClientSecret = "smeagolCries",
                 Scope = "moviesAPI"
             });
+            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

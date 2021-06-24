@@ -46,7 +46,10 @@ namespace Movies.api
             //claim based authorization (if using this, then the Authorize attributes will need to pass the policy in, controllers will have examples of both)
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "moviesClient"));
+                //when changing to hybrid we changed the claim from "moviesClient" to "movies_mvc_client"
+                //options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "moviesClient"));
+                //options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "moviesClient", "movies_mvc_client")); //this also works
+                options.AddPolicy("ClientIdPolicy", policy => policy.RequireClaim("client_id", "movies_mvc_client"));
             });
         }
 

@@ -19,6 +19,7 @@ namespace IdentityServer
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
+                /* disabled when we added hybrid grant type because this is no longer needed*/
                 new Client
                 {
                     ClientId = MOVIES_CLIENT,
@@ -33,7 +34,8 @@ namespace IdentityServer
                 {
                     ClientId = MOVIES_MVC_CLIENT,
                     ClientName = MOVIES_MVC_DESCRIPTION,
-                    AllowedGrantTypes = GrantTypes.Code, //provides info about the flow - using the token when logging in with user credentials
+                    AllowedGrantTypes = GrantTypes.Hybrid, //provides info about the flow - using the token when logging in with user credentials
+                    RequirePkce = false, //this was set to false when changing from Code Grant Type to Hybrid Grand Type
                     AllowRememberConsent = false,
                     RedirectUris = new List<string>()
                     {
@@ -50,7 +52,8 @@ namespace IdentityServer
                     AllowedScopes = new List<string> //which areas can we access?
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        MOVIES_API
                     }
                 }
             };
