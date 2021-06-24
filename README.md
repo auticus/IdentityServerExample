@@ -10,3 +10,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 Movies.Client - a sample web app that needs authentication to access the api.
 ---> Nuget package Microsoft.AspNetCore.Authentication.OpenIdConnect -> middleware that enables an application to support the OpenID Connect authentication workflow
 ---> Nuget package IdentityModel -> OpenID Connect and OAuth2.0 client library
+
+Hybrid Flow 
+https://code-maze.com/hybrid-flow-securing-aspnetcore-web-application/
+We are using the Hybrid Flow when we want to acquire our tokens over the front and back channels. When we receive a token via /authorization endpoint over URI or Form POST, we are talking about the front-channel. When we receive a token via /token endpoint, we are talking about the back-channel. The Hybrid flow uses both channels in the process
