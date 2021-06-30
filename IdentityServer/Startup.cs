@@ -1,3 +1,4 @@
+using IdentityServerHost.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +35,8 @@ namespace IdentityServer
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddTestUsers(Config.TestUsers)
+                //.AddTestUsers(Config.TestUsers)
+                .AddTestUsers(TestUsers.Users)
                 .AddDeveloperSigningCredential(); //temp signing credentials to use in dev when you dont have a certificate to use
                                                     //uses the tempkey.jwk
         }

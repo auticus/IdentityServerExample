@@ -1,5 +1,7 @@
 ﻿using System;
+using IdentityModel;
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Movies.client.Clients;
 using Movies.client.HttpHandler;
@@ -41,10 +44,24 @@ namespace Movies.client
                     options.ResponseType = "code id_token"; //changed from code to code id_token in hybrid 
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
+                    options.Scope.Add("address");
+                    options.Scope.Add("email");
                     options.Scope.Add("moviesAPI");
+                    options.Scope.Add("roles");
+
+                    //now at this point just adding "roles" was not enough - if you ran with just this the role was not coming across
+                    //need to map the unique json key as well to get it to show up in the claim
+                    options.ClaimActions.MapUniqueJsonKey("role", "role");
 
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
+
+                    //validate claim type.  if claim type does not exist - give an error
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = JwtClaimTypes.GivenName,
+                        RoleClaimType = JwtClaimTypes.Role
+                    };
                 });
 
             //create httpClient used for accessing the Movies.API

@@ -24,7 +24,7 @@ namespace Movies.client.Controllers
         // GET: Movies
         public async Task<IActionResult> Index()
         {
-            LogTokenAndClaims();
+            await LogTokenAndClaims();
             return View(await _movieClient.GetMovies());
         }
 
@@ -168,6 +168,13 @@ namespace Movies.client.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
             */
+        }
+
+        [Authorize(Roles="admin")]
+        public async Task<IActionResult> OnlyAdmin()
+        {
+            var userInfo = await _movieClient.GetUserInfo();
+            return View(userInfo);
         }
 
         public async Task Logout()

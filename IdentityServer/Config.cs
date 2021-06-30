@@ -16,6 +16,7 @@ namespace IdentityServer
         private const string MOVIES_MVC_DESCRIPTION = "Movies MVC Web App";
         private const string MOVIES_CLIENT = "moviesClient";
         private const string MOVIES_SECRET = "smeagolCries";
+        private const string ROLES_RESOURCE = "roles";
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
@@ -53,7 +54,10 @@ namespace IdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        MOVIES_API
+                        IdentityServerConstants.StandardScopes.Address,
+                        IdentityServerConstants.StandardScopes.Email,
+                        MOVIES_API,
+                        ROLES_RESOURCE //custom resource we created
                     }
                 }
             };
@@ -74,7 +78,14 @@ namespace IdentityServer
             new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile() 
+                new IdentityResources.Profile(),
+                new IdentityResources.Address(),
+                new IdentityResources.Email(),
+                new IdentityResource( //because roles are not a built in part, we have to create it here
+                    ROLES_RESOURCE,
+                    "Your role(s)",
+                    new List<string>() {"role"}
+                    )
             };
 
         //Test users are only for dev - not for prod code!

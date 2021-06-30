@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Movies.client.Models;
 using Newtonsoft.Json;
 
@@ -12,10 +15,12 @@ namespace Movies.client.Clients
     public class MovieAPIService : IMovieAPIService
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MovieAPIService(IHttpClientFactory clientFactory)
+        public MovieAPIService(IHttpClientFactory clientFactory, IHttpContextAccessor contextAccessor)
         {
             _clientFactory = clientFactory;
+            _httpContextAccessor = contextAccessor;
         }
 
         public async Task<IEnumerable<Movie>> GetMovies()
@@ -86,6 +91,41 @@ namespace Movies.client.Clients
         public Task DeleteMovie(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<UserInfo> GetUserInfo()
+        {
+            var idpClient = _clientFactory.CreateClient("IDPClient");
+            var discoveryResponse = await idpClient.GetDiscoveryDocumentAsync();
+            if (discoveryResponse.IsError)
+            {
+                throw new HttpRequestException("Something went wrong while getting the access token");
+            }
+
+            var accessToken =
+                await _httpContextAccessor.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            var userInfoResponse = await idpClient.GetUserInfoAsync(
+                new UserInfoRequest
+                {
+                    Address = discoveryResponse.UserInfoEndpoint,
+                    Token = accessToken
+                });
+
+            if (userInfoResponse.IsError)
+            {
+                throw new HttpRequestException("Something went wrong with getting user info");
+            }
+
+            var userInfoDictionary = new Dictionary<string, string>();
+            foreach (var claim in userInfoResponse.Claims)
+            {
+                userInfoDictionary.Add(claim.Type, claim.Value);
+            }
+
+            var info = new UserInfo(userInfoDictionary);
+
+            return info;
         }
     }
 }
