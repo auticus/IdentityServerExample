@@ -69,7 +69,8 @@ namespace Movies.client
 
             services.AddHttpClient("MoviesAPIClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                //client.BaseAddress = new Uri("https://localhost:5001/"); //we should not access the microservice directly
+                client.BaseAddress = new Uri("https://localhost:5010/"); //this is the ocelot gateway
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
             }).AddHttpMessageHandler<AuthenticationDelegatingHandler>(); //lets this client know that the handler class given will be intercepting its messages

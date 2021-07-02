@@ -27,7 +27,8 @@ namespace Movies.client.Clients
         {
             //going to use an interceptor to insert the token as needed
             var client = _clientFactory.CreateClient("MoviesAPIClient");
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/movies/");
+            //var request = new HttpRequestMessage(HttpMethod.Get, "/api/movies/"); //the /api/movies/ is not exposed in ocelot
+            var request = new HttpRequestMessage(HttpMethod.Get, "/movies"); //ocelot 
             var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
                 .ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
