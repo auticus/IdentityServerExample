@@ -38,3 +38,4 @@ While this grant type is supported on its own, it is generally recommended you c
 Ocelot Gateway
 ==============
 The OcelotApiGateway project uses the Ocelot package to unify point of entry into the system.
+Also uses the Microsoft.AspNetCore.Authentication.JwtBearer package
